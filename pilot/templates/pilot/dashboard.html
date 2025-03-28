@@ -9,7 +9,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {% for kpi in kpis %}
                 <div class="bg-white shadow rounded-xl p-5">
-                    <h2 class="text-xl font-semibold mb-2">{{ kpi.nom }}</h2>
+                    <h2 class="text-xl font-semibold mb-2">
+                        <a href="{% url 'kpi-detail' kpi.pk %}" class="text-blue-600 hover:underline">
+                            {{ kpi.nom }}
+                        </a>
+                    </h2>
                     <p><strong>Valeur actuelle :</strong> {{ kpi.valeur_actuelle }}</p>
                     <p><strong>Objectif :</strong> {{ kpi.objectif }}</p>
                     <p><strong>Écart :</strong> 
