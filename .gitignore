@@ -1,0 +1,22 @@
+# Environnement virtuel
+env/
+venv/
+ENV/
+.venv/
+
+# Fichiers Python inutiles
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Secrets et configs
+.env
+*.log
+
+# Fichiers Django statiques ou temporaires
+staticfiles/
+media/
+db.sqlite3
+
+# VS Code
+.vscode/
