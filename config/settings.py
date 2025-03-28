@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pilot'
+    'pilot',
+    'tailwind',
+    'theme'
+
 ]
 
 AUTH_USER_MODEL = 'pilot.User'
@@ -125,3 +130,20 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Tailwind app 
+TAILWIND_APP_NAME = 'theme'
+
+# The path to the Tailwind CSS configuration file.
+# This is used to generate the CSS file for the app.
+TAILWIND_CSS_PATH = 'theme/static/css/dist/styles.css'
+
+#the internal IPs for the debug toolbar
+# This is used to show the debug toolbar in the browser.
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+# This is used to specify the path to the npm executable.
+# This is used to install the Tailwind CSS dependencies.
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
