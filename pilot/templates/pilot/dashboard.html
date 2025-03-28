@@ -1,0 +1,31 @@
+{% extends "pilot/base.html" %}
+
+{% block title %}Dashboard – Pilot'Éclair{% endblock %}
+
+{% block content %}
+    <h1 class="text-3xl font-bold mb-6 text-center">📊 Suivi des KPIs – Pilot'Éclair</h1>
+
+    {% if kpis %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for kpi in kpis %}
+                <div class="bg-white shadow rounded-xl p-5">
+                    <h2 class="text-xl font-semibold mb-2">{{ kpi.nom }}</h2>
+                    <p><strong>Valeur actuelle :</strong> {{ kpi.valeur_actuelle }}</p>
+                    <p><strong>Objectif :</strong> {{ kpi.objectif }}</p>
+                    <p><strong>Écart :</strong> 
+                        {% if kpi.ecart > 0 %}
+                            <span class="text-green-600 font-bold">+{{ kpi.ecart }}</span>
+                        {% elif kpi.ecart < 0 %}
+                            <span class="text-red-600 font-bold">{{ kpi.ecart }}</span>
+                        {% else %}
+                            <span class="text-gray-600">0</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-sm text-gray-500 mt-2">Date : {{ kpi.date }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-gray-600">Aucun KPI disponible pour le moment.</p>
+    {% endif %}
+{% endblock %}
