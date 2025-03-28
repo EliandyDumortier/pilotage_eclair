@@ -14,16 +14,24 @@ class User(AbstractUser):
 
 
 class KPI(models.Model):
+    CATEGORIES = [
+        ('financier', 'Financier'),
+        ('operationnel', 'Opérationnel'),
+        ('autre', 'Autre'),
+    ]
+
     nom = models.CharField(max_length=100)
     valeur_actuelle = models.FloatField()
     objectif = models.FloatField()
     date = models.DateField(auto_now_add=True)
+    categorie = models.CharField(max_length=50, choices=CATEGORIES, default='autre')
 
     def ecart(self):
         return self.valeur_actuelle - self.objectif
 
     def __str__(self):
         return f"{self.nom} - {self.date}"
+
 
 
 class Commentaire(models.Model):

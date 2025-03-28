@@ -17,6 +17,18 @@
                     <p><strong>Valeur actuelle :</strong> {{ kpi.valeur_actuelle }}</p>
                     <p><strong>Objectif :</strong> {{ kpi.objectif }}</p>
                     <p><strong>Écart :</strong> 
+                        <form method="get" class="mb-6 flex items-center gap-3">
+                            <label for="date" class="text-sm font-semibold">Filtrer par date :</label>
+                            <input type="date" id="date" name="date" value="{{ date_selected }}"
+                                   class="border rounded px-2 py-1">
+                            <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                                Appliquer
+                            </button>
+                            {% if filter_applied %}
+                                <a href="{% url 'dashboard' %}" class="text-sm text-red-600 underline ml-3">Réinitialiser</a>
+                            {% endif %}
+                        </form>
+                        
                         {% if kpi.ecart > 0 %}
                             <span class="text-green-600 font-bold">+{{ kpi.ecart }}</span>
                         {% elif kpi.ecart < 0 %}
