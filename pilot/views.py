@@ -12,8 +12,28 @@ class DashboardView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['kpis'] = KPI.objects.all().order_by('-date')
+        date_filter = self.request.GET.get('date')
+        categorie_filter = self.request.GET.get('categorie')
+
+        kpis = KPI.objects.all()
+
+        if date_filter:
+            from django.utils.dateparse import parse_date
+            date = parse_date(date_filter)
+            if date:
+                kpis = kpis.filter(date=date)
+                context['date_selected'] = date_filter
+                context['filter_applied'] = True
+
+        if categorie_filter:
+            kpis = kpis.filter(categorie=categorie_filter)
+            context['categorie_selected'] = categorie_filter
+            context['filter_applied'] = True
+
+        context['kpis'] = kpis.order_by('-date')
+        context['categories'] = KPI.CATEGORIES
         return context
+
 
 # Formulaire pour les commentaires
 class CommentaireForm(forms.ModelForm):
