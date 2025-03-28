@@ -3,19 +3,19 @@
 {% block title %}Dashboard – Pilot'Éclair{% endblock %}
 
 {% block content %}
-    <h1 class="text-3xl font-bold mb-6 text-center">📊 Suivi des KPIs – Pilot'Éclair</h1>
+    <h1 class="text-3xl font-bold mb-6 text-center text-cacf-green">📊 Suivi des KPIs – Pilot'Éclair</h1>
 
     <!-- Formulaire de filtre -->
     <form method="get" class="mb-6 flex flex-col md:flex-row items-center gap-4 justify-center">
         <div>
             <label for="date" class="text-sm font-semibold">Date :</label>
             <input type="date" id="date" name="date" value="{{ date_selected }}"
-                   class="border rounded px-2 py-1">
+                   class="border border-cacf-mediumgray rounded px-2 py-1">
         </div>
 
         <div>
             <label for="categorie" class="text-sm font-semibold">Catégorie :</label>
-            <select name="categorie" id="categorie" class="border rounded px-2 py-1">
+            <select name="categorie" id="categorie" class="border border-cacf-mediumgray rounded px-2 py-1">
                 <option value="">-- Toutes --</option>
                 {% for key, label in categories %}
                     <option value="{{ key }}" {% if key == categorie_selected %}selected{% endif %}>
@@ -26,11 +26,11 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
+            <button type="submit" class="bg-cacf-green text-white px-4 py-1 rounded hover:bg-cacf-dark">
                 Appliquer
             </button>
             {% if filter_applied %}
-                <a href="{% url 'dashboard' %}" class="text-sm text-red-600 underline">Réinitialiser</a>
+                <a href="{% url 'dashboard' %}" class="text-sm text-cacf-alert underline">Réinitialiser</a>
             {% endif %}
         </div>
     </form>
@@ -39,9 +39,9 @@
     {% if kpis %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {% for kpi in kpis %}
-                <div class="bg-white shadow rounded-xl p-5">
+                <div class="bg-white shadow rounded-xl p-5 border border-cacf-mediumgray">
                     <h2 class="text-xl font-semibold mb-2">
-                        <a href="{% url 'kpi-detail' kpi.pk %}" class="text-blue-600 hover:underline">
+                        <a href="{% url 'kpi-detail' kpi.pk %}" class="text-cacf-green hover:underline">
                             {{ kpi.nom }}
                         </a>
                     </h2>
@@ -49,19 +49,19 @@
                     <p><strong>Objectif :</strong> {{ kpi.objectif }}</p>
                     <p><strong>Écart :</strong> 
                         {% if kpi.ecart > 0 %}
-                            <span class="text-green-600 font-bold">+{{ kpi.ecart }}</span>
+                            <span class="text-cacf-green font-bold">+{{ kpi.ecart }}</span>
                         {% elif kpi.ecart < 0 %}
-                            <span class="text-red-600 font-bold">{{ kpi.ecart }}</span>
+                            <span class="text-cacf-alert font-bold">{{ kpi.ecart }}</span>
                         {% else %}
-                            <span class="text-gray-600">0</span>
+                            <span class="text-cacf-mediumgray">0</span>
                         {% endif %}
                     </p>
                     <p><strong>Catégorie :</strong> {{ kpi.get_categorie_display }}</p>
-                    <p class="text-sm text-gray-500 mt-2">Date : {{ kpi.date }}</p>
+                    <p class="text-sm text-cacf-mediumgray mt-2">Date : {{ kpi.date }}</p>
                 </div>
             {% endfor %}
         </div>
     {% else %}
-        <p class="text-center text-gray-600">Aucun KPI disponible pour le moment.</p>
+        <p class="text-center text-cacf-mediumgray">Aucun KPI disponible pour le moment.</p>
     {% endif %}
 {% endblock %}

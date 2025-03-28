@@ -1,11 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Pilot'Éclair{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body class="bg-cacf-gray text-gray-800 font-sans">
     <div class="max-w-5xl mx-auto py-10">
         {% block content %}{% endblock %}
     </div>

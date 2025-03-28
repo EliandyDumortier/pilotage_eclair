@@ -3,41 +3,41 @@
 {% block title %}{{ kpi.nom }} – Détail KPI{% endblock %}
 
 {% block content %}
-    <h1 class="text-2xl font-bold mb-4">{{ kpi.nom }}</h1>
-    <div class="bg-white p-4 rounded-lg shadow mb-6">
+    <h1 class="text-2xl font-bold mb-4 text-cacf-green">{{ kpi.nom }}</h1>
+    <div class="bg-white p-4 rounded-lg shadow mb-6 border border-cacf-mediumgray">
         <p><strong>Valeur actuelle :</strong> {{ kpi.valeur_actuelle }}</p>
         <p><strong>Objectif :</strong> {{ kpi.objectif }}</p>
         <p><strong>Écart :</strong> 
             {% if kpi.ecart > 0 %}
-                <span class="text-green-600 font-bold">+{{ kpi.ecart }}</span>
+                <span class="text-cacf-green font-bold">+{{ kpi.ecart }}</span>
             {% elif kpi.ecart < 0 %}
-                <span class="text-red-600 font-bold">{{ kpi.ecart }}</span>
+                <span class="text-cacf-alert font-bold">{{ kpi.ecart }}</span>
             {% else %}
-                <span class="text-gray-600">0</span>
+                <span class="text-cacf-mediumgray">0</span>
             {% endif %}
         </p>
-        <p class="text-sm text-gray-500 mt-2">Date : {{ kpi.date }}</p>
+        <p class="text-sm text-cacf-mediumgray mt-2">Date : {{ kpi.date }}</p>
     </div>
 
     <h2 class="text-xl font-semibold mb-3">💬 Commentaires</h2>
     {% for commentaire in kpi.commentaires.all %}
-        <div class="bg-gray-100 p-3 rounded mb-2">
+        <div class="bg-cacf-gray p-3 rounded mb-2">
             <p class="text-sm text-gray-700">{{ commentaire.contenu }}</p>
-            <p class="text-xs text-gray-500">– {{ commentaire.utilisateur.username }} | {{ commentaire.date_creation|date:"d/m/Y H:i" }}</p>
+            <p class="text-xs text-cacf-mediumgray">– {{ commentaire.utilisateur.username }} | {{ commentaire.date_creation|date:"d/m/Y H:i" }}</p>
         </div>
     {% empty %}
-        <p class="text-gray-500">Aucun commentaire pour l’instant.</p>
+        <p class="text-cacf-mediumgray">Aucun commentaire pour l’instant.</p>
     {% endfor %}
 
     {% if user.is_authenticated %}
         <form method="post" class="mt-6">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            <button type="submit" class="mt-2 bg-cacf-green text-white px-4 py-2 rounded hover:bg-cacf-dark">
                 Ajouter un commentaire
             </button>
         </form>
     {% else %}
-        <p class="mt-4 text-gray-600">Connectez-vous pour ajouter un commentaire.</p>
+        <p class="mt-4 text-cacf-mediumgray">Connectez-vous pour ajouter un commentaire.</p>
     {% endif %}
 {% endblock %}
