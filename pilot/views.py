@@ -1,11 +1,15 @@
 from django.shortcuts import render
 
 # Create your views here.
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
 from django.views.generic import TemplateView,DetailView
 from django.views.generic.edit import FormMixin
 from django.urls import reverse
 from .models import KPI, Commentaire
 from django import forms
+from django.shortcuts import render, redirect
+
 
 class DashboardView(TemplateView):
     template_name = 'pilot/dashboard.html'
@@ -67,3 +71,20 @@ class KPIDetailView(FormMixin, DetailView):
             commentaire.save()
             return self.form_valid(form)
         return self.form_invalid(form)
+
+
+class RoleDashboardView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        kpis = KPI.objects.all().order_by('-date')[:10]
+
+        if user.role == 'admin':
+            template_name = 'pilot/dash_admin.html'
+        elif user.role == 'analyste':
+            template_name = 'pilot/dash_analyste.html'
+        elif user.role == 'metier':
+            template_name = 'pilot/dash_metier.html'
+        else:
+            return redirect('dashboard')  # fallback
+
+        return render(request, template_name, {'kpis': kpis})

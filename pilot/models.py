@@ -23,7 +23,7 @@ class KPI(models.Model):
     nom = models.CharField(max_length=100)
     valeur_actuelle = models.FloatField()
     objectif = models.FloatField()
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     categorie = models.CharField(max_length=50, choices=CATEGORIES, default='autre')
 
     def ecart(self):
