@@ -147,3 +147,8 @@ INTERNAL_IPS = [
 # This is used to specify the path to the npm executable.
 # This is used to install the Tailwind CSS dependencies.
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
+
+#login and logout urls
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
