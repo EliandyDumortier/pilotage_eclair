@@ -1,0 +1,47 @@
+{% extends "pilot/base.html" %}
+{% load static %}
+
+{% block title %}Bienvenue – Pilot'Éclair{% endblock %}
+
+{% block content %}
+<div class="text-center space-y-6">
+    <h1 class="text-4xl font-bold text-cacf-green">Bienvenue sur Pilot'Éclair</h1>
+    <p class="text-xl text-cacf-dark font-medium">Votre solution d’analyse à chaud pour les métiers, les analystes et les décideurs</p>
+
+    <!-- Slideshow / roulette -->
+    <div class="mt-8 flex flex-col items-center justify-center">
+        <div id="slideshow" class="text-lg font-semibold text-gray-700 bg-white px-6 py-4 border rounded shadow w-full md:w-2/3">
+            <i data-lucide="bar-chart-3" class="inline-block w-5 h-5 text-cacf-green mr-2"></i>
+            <span id="slide-text">Surveillez les indicateurs clés en temps réel</span>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="mt-8">
+        <a href="{% url 'login' %}" class="bg-cacf-green hover:bg-cacf-dark text-white font-bold py-2 px-6 rounded">
+            Se connecter
+        </a>
+    </div>
+</div>
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+
+  const messages = [
+    { icon: 'bar-chart-3', text: 'Surveillez les indicateurs clés en temps réel' },
+    { icon: 'activity', text: 'Analysez les écarts dès leur apparition' },
+    { icon: 'users', text: 'Collaborez entre analystes et métiers' },
+    { icon: 'zap', text: 'Réagissez rapidement et améliorez la performance' },
+  ];
+
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % messages.length;
+    const slide = messages[i];
+    document.getElementById("slide-text").innerHTML = `<i data-lucide="${slide.icon}" class="inline-block w-5 h-5 text-cacf-green mr-2"></i> ${slide.text}`;
+    lucide.createIcons();
+  }, 4000);
+</script>
+{% endblock %}

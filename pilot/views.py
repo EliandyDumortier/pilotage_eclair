@@ -11,6 +11,10 @@ from django import forms
 from django.shortcuts import render, redirect
 
 
+class WelcomeView(TemplateView):
+    template_name = 'pilot/home.html'
+
+
 class RoleDashboardView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
