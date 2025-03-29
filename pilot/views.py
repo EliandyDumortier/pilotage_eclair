@@ -11,13 +11,11 @@ from django import forms
 from django.shortcuts import render, redirect
 
 
-class DashboardView(TemplateView):
-    template_name = 'pilot/dashboard.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        date_filter = self.request.GET.get('date')
-        categorie_filter = self.request.GET.get('categorie')
+class RoleDashboardView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        date_filter = request.GET.get('date')
+        categorie_filter = request.GET.get('categorie')
 
         kpis = KPI.objects.all()
 
@@ -26,17 +24,30 @@ class DashboardView(TemplateView):
             date = parse_date(date_filter)
             if date:
                 kpis = kpis.filter(date=date)
-                context['date_selected'] = date_filter
-                context['filter_applied'] = True
 
         if categorie_filter:
             kpis = kpis.filter(categorie=categorie_filter)
-            context['categorie_selected'] = categorie_filter
-            context['filter_applied'] = True
 
-        context['kpis'] = kpis.order_by('-date')
-        context['categories'] = KPI.CATEGORIES
-        return context
+        kpis = kpis.order_by('-date')
+
+        context = {
+            'kpis': kpis,
+            'categories': KPI.CATEGORIES,
+            'date_selected': date_filter,
+            'categorie_selected': categorie_filter,
+            'filter_applied': date_filter or categorie_filter
+        }
+
+        if user.role == 'admin':
+            template_name = 'pilot/dash_admin.html'
+        elif user.role == 'analyste':
+            template_name = 'pilot/dash_analyste.html'
+        elif user.role == 'metier':
+            template_name = 'pilot/dash_metier.html'
+        else:
+            return redirect('home')
+
+        return render(request, template_name, context)
 
 
 # Formulaire pour les commentaires
@@ -73,18 +84,3 @@ class KPIDetailView(FormMixin, DetailView):
         return self.form_invalid(form)
 
 
-class RoleDashboardView(LoginRequiredMixin, View):
-    def get(self, request):
-        user = request.user
-        kpis = KPI.objects.all().order_by('-date')[:10]
-
-        if user.role == 'admin':
-            template_name = 'pilot/dash_admin.html'
-        elif user.role == 'analyste':
-            template_name = 'pilot/dash_analyste.html'
-        elif user.role == 'metier':
-            template_name = 'pilot/dash_metier.html'
-        else:
-            return redirect('dashboard')  # fallback
-
-        return render(request, template_name, {'kpis': kpis})
