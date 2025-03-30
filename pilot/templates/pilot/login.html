@@ -1,36 +1,94 @@
-{% extends "pilot/base.html" %}
-{% block title %}Connexion – Pilot'Éclair{% endblock %}
+{% extends 'pilot/base.html' %}
 
 {% block content %}
-<div class="max-w-md mx-auto bg-white shadow-md rounded-lg p-8 border border-cacf-mediumgray">
-    <h1 class="text-2xl font-bold text-center text-cacf-green mb-6">Connexion</h1>
+<div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <img class="mx-auto h-12 w-auto" src="{% static 'img/logo-cacf.png' %}" alt="CACF">
+        <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+            Connexion à Pilot'Éclair
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            Votre outil d'analyse à chaud CACF
+        </p>
+    </div>
 
-    {% if form.errors %}
-        <p class="text-cacf-alert text-sm mb-4">Identifiants incorrects. Veuillez réessayer.</p>
-    {% endif %}
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow-2xl sm:rounded-lg sm:px-10 ring-1 ring-gray-900/5">
+            <form class="space-y-6" method="POST">
+                {% csrf_token %}
+                <div>
+                    <label for="username" class="block text-sm font-medium leading-6 text-gray-900">
+                        Identifiant
+                    </label>
+                    <div class="mt-2 relative rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i data-lucide="user" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                        <input id="username" name="username" type="text" required 
+                               class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cacf-green sm:text-sm sm:leading-6 transition-colors duration-200"
+                               placeholder="Votre identifiant">
+                    </div>
+                </div>
 
-    <form method="post" novalidate>
-        {% csrf_token %}
+                <div>
+                    <label for="password" class="block text-sm font-medium leading-6 text-gray-900">
+                        Mot de passe
+                    </label>
+                    <div class="mt-2 relative rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <i data-lucide="lock" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                        <input id="password" name="password" type="password" required
+                               class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-cacf-green sm:text-sm sm:leading-6 transition-colors duration-200"
+                               placeholder="Votre mot de passe">
+                    </div>
+                </div>
 
-        <div class="mb-4">
-            <label for="id_username" class="block font-semibold mb-1">Email</label>
-            <input type="text" name="username" autofocus required id="id_username"
-                   class="w-full border border-cacf-mediumgray rounded px-3 py-2">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox"
+                               class="h-4 w-4 rounded border-gray-300 text-cacf-green focus:ring-cacf-green">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-900">Se souvenir de moi</label>
+                    </div>
+
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-cacf-green hover:text-cacf-dark transition-colors duration-200">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" 
+                            class="flex w-full justify-center items-center gap-2 rounded-md bg-cacf-green px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cacf-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cacf-green transition-all duration-200 transform hover:scale-105">
+                        <i data-lucide="log-in" class="h-4 w-4"></i>
+                        Se connecter
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="bg-white px-2 text-gray-500">Besoin d'aide ?</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-4">
+                    <a href="#" class="flex items-center justify-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors duration-200">
+                        <i data-lucide="help-circle" class="h-4 w-4"></i>
+                        Support
+                    </a>
+                    <a href="#" class="flex items-center justify-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors duration-200">
+                        <i data-lucide="mail" class="h-4 w-4"></i>
+                        Contact
+                    </a>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-6">
-            <label for="id_password" class="block font-semibold mb-1">Mot de passe</label>
-            <input type="password" name="password" required id="id_password"
-                   class="w-full border border-cacf-mediumgray rounded px-3 py-2">
-        </div>
-
-        <button type="submit" class="w-full bg-cacf-green text-white py-2 rounded hover:bg-cacf-dark">
-            Se connecter
-        </button>
-    </form>
-
-    <p class="text-center text-sm text-cacf-mediumgray mt-4">
-        <a href="#" class="underline">Mot de passe oublié ?</a> (à venir)
-    </p>
+    </div>
 </div>
 {% endblock %}

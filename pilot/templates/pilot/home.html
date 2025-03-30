@@ -1,47 +1,461 @@
 {% extends "pilot/base.html" %}
 {% load static %}
 
-{% block title %}Bienvenue – Pilot'Éclair{% endblock %}
+{% block title %}Accueil - Pilot'Éclair{% endblock %}
 
 {% block content %}
-<div class="text-center space-y-6">
-    <h1 class="text-4xl font-bold text-cacf-green">Bienvenue sur Pilot'Éclair</h1>
-    <p class="text-xl text-cacf-dark font-medium">Votre solution d’analyse à chaud pour les métiers, les analystes et les décideurs</p>
+{% if user.is_authenticated %}
+    <!-- Hero Section with Swiper Carousel -->
+    <div class="relative h-[600px] overflow-hidden">
+        <div class="swiper hero-swiper h-full">
+            <div class="swiper-wrapper">
+                {% if user.role == 'admin' %}
+                    <!-- Admin Slide 1 -->
+                    <div class="swiper-slide">
+                        <div class="relative h-full">
+                            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=2000" 
+                                 alt="Gestion des utilisateurs" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30"></div>
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                    <div class="text-center text-white">
+                                        <h1 class="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl">
+                                            <span class="block">Gestion des Utilisateurs</span>
+                                            <span class="block text-cacf-green">Administration Simplifiée</span>
+                                        </h1>
+                                        <p class="mt-3 max-w-md mx-auto text-base sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                                            Gérez efficacement les utilisateurs, leurs rôles et leurs permissions en quelques clics.
+                                        </p>
+                                        <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+                                            <div class="rounded-md shadow">
+                                                <a href="{% url 'dashboard' %}" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-cacf-green hover:bg-cacf-dark md:py-4 md:text-lg md:px-10">
+                                                    Gérer les utilisateurs
+                                                    <i data-lucide="users" class="ml-2 h-5 w-5"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Slideshow / roulette -->
-    <div class="mt-8 flex flex-col items-center justify-center">
-        <div id="slideshow" class="text-lg font-semibold text-gray-700 bg-white px-6 py-4 border rounded shadow w-full md:w-2/3">
-            <i data-lucide="bar-chart-3" class="inline-block w-5 h-5 text-cacf-green mr-2"></i>
-            <span id="slide-text">Surveillez les indicateurs clés en temps réel</span>
+                    <!-- Admin Slide 2 -->
+                    <div class="swiper-slide">
+                        <div class="relative h-full">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2000" 
+                                 alt="Statistiques" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30"></div>
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                    <div class="text-center text-white">
+                                        <h1 class="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl">
+                                            <span class="block">Vue d'Ensemble</span>
+                                            <span class="block text-cacf-green">Statistiques Globales</span>
+                                        </h1>
+                                        <p class="mt-3 max-w-md mx-auto text-base sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                                            Suivez les statistiques d'utilisation et les performances de la plateforme.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% elif user.role == 'analyste' %}
+                    <!-- Analyste Slide 1 -->
+                    <div class="swiper-slide">
+                        <div class="relative h-full">
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=2000" 
+                                 alt="Analyses" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30"></div>
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                    <div class="text-center text-white">
+                                        <h1 class="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl">
+                                            <span class="block">Analyses Power BI</span>
+                                            <span class="block text-cacf-green">Insights en Temps Réel</span>
+                                        </h1>
+                                        <p class="mt-3 max-w-md mx-auto text-base sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                                            Importez et partagez vos analyses Power BI pour une prise de décision éclairée.
+                                        </p>
+                                        <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+                                            <div class="rounded-md shadow">
+                                                <a href="{% url 'dashboard' %}" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-cacf-green hover:bg-cacf-dark md:py-4 md:text-lg md:px-10">
+                                                    Voir les analyses
+                                                    <i data-lucide="bar-chart" class="ml-2 h-5 w-5"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% elif user.role == 'metier' %}
+                    <!-- Métier Slide 1 -->
+                    <div class="swiper-slide">
+                        <div class="relative h-full">
+                            <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=2000" 
+                                 alt="KPIs" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30"></div>
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                    <div class="text-center text-white">
+                                        <h1 class="text-4xl tracking-tight font-extrabold sm:text-5xl md:text-6xl">
+                                            <span class="block">Suivi des KPIs</span>
+                                            <span class="block text-cacf-green">Performance Opérationnelle</span>
+                                        </h1>
+                                        <p class="mt-3 max-w-md mx-auto text-base sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                                            Suivez vos indicateurs clés et exportez vos données en un clic.
+                                        </p>
+                                        <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+                                            <div class="rounded-md shadow">
+                                                <a href="{% url 'dashboard' %}" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-cacf-green hover:bg-cacf-dark md:py-4 md:text-lg md:px-10">
+                                                    Voir les KPIs
+                                                    <i data-lucide="trending-up" class="ml-2 h-5 w-5"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Swiper Navigation -->
+            <div class="swiper-button-prev text-white"></div>
+            <div class="swiper-button-next text-white"></div>
+
+            <!-- Swiper Pagination -->
+            <div class="swiper-pagination"></div>
         </div>
     </div>
 
-    <!-- CTA -->
-    <div class="mt-8">
-        <a href="{% url 'login' %}" class="bg-cacf-green hover:bg-cacf-dark text-white font-bold py-2 px-6 rounded">
-            Se connecter
-        </a>
+    <!-- Feature Cards -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {% if user.role == 'admin' %}
+                <!-- Admin Feature Card 1 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-12 w-12 bg-cacf-green/20 rounded-md flex items-center justify-center">
+                                    <i data-lucide="users" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Gestion Utilisateurs</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Créez et gérez les comptes utilisateurs
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'dashboard' %}" class="text-sm font-medium text-cacf-green hover:text-cacf-dark">
+                                Gérer les utilisateurs <span aria-hidden="true">&rarr;</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Feature Card 2 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-12 w-12 bg-cacf-green/20 rounded-md flex items-center justify-center">
+                                    <i data-lucide="shield" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Gestion des Rôles</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Définissez les permissions par rôle
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Feature Card 3 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-12 w-12 bg-cacf-green/20 rounded-md flex items-center justify-center">
+                                    <i data-lucide="activity" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Statistiques</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Suivez l'activité de la plateforme
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif user.role == 'analyste' %}
+                <!-- Analyste Feature Card 1 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-12 w-12 bg-cacf-green/20 rounded-md flex items-center justify-center">
+                                    <i data-lucide="bar-chart" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Power BI</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Importez vos rapports Power BI
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'dashboard' %}" class="text-sm font-medium text-cacf-green hover:text-cacf-dark">
+                                Voir les rapports <span aria-hidden="true">&rarr;</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analyste Feature Card 2 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-12 w-12 bg-cacf-green/20 rounded-md flex items-center justify-center">
+                                    <i data-lucide="message-square" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Insights</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Partagez vos analyses et commentaires
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analyste Feature Card 3 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-12 w-12 bg-cacf-green/20 rounded-md flex items-center justify-center">
+                                    <i data-lucide="filter" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Filtres Avancés</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Affinez vos analyses avec des filtres
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif user.role == 'metier' %}
+                <!-- Métier Feature Card 1 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-12 w-12 bg-cacf-green/20 rounded-md flex items-center justify-center">
+                                    <i data-lucide="trending-up" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">KPIs</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Suivez vos indicateurs clés
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'dashboard' %}" class="text-sm font-medium text-cacf-green hover:text-cacf-dark">
+                                Voir les KPIs <span aria-hidden="true">&rarr;</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métier Feature Card 2 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-12 w-12 bg-cacf-green/20 rounded-md flex items-center justify-center">
+                                    <i data-lucide="download" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Export Excel</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Exportez vos données en Excel
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métier Feature Card 3 -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-12 w-12 bg-cacf-green/20 rounded-md flex items-center justify-center">
+                                    <i data-lucide="message-square" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Commentaires</h3>
+                                <p class="mt-2 text-sm text-gray-500">
+                                    Ajoutez des commentaires aux KPIs
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
-</div>
 
-<!-- Lucide icons -->
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-  lucide.createIcons();
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            new Swiper('.hero-swiper', {
+                loop: true,
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev'
+                }
+            });
+        });
+    </script>
+{% else %}
+    <!-- Unauthenticated User Home/Login Page -->
+    <div class="flex min-h-screen">
+        <!-- Left Half: Background Image -->
+        <div class="hidden md:block w-1/2 relative">
+            <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&q=80&w=2000" 
+                 alt="Pilot'Éclair" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-cacf-green/80 to-black/50"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="text-center text-white px-8 max-w-lg">
+                    <i data-lucide="zap" class="h-12 w-12 text-white mb-4 mx-auto"></i>
+                    <h2 class="text-4xl font-extrabold mb-6">Pilot'Éclair CACF Analytics</h2>
+                    <p class="text-xl leading-relaxed">
+                        Votre plateforme d'analyse à chaud pour optimiser la performance opérationnelle.
+                    </p>
+                    <div class="mt-8 flex justify-center space-x-4">
+                        <div class="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
+                            <i data-lucide="zap" class="h-8 w-8 text-white mx-auto"></i>
+                            <p class="mt-2 text-sm font-medium">Analyse temps réel</p>
+                        </div>
+                        <div class="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
+                            <i data-lucide="handshake" class="h-8 w-8 text-white mx-auto"></i>
+                            <p class="mt-2 text-sm font-medium">Collaboration</p>
+                        </div>
+                        <div class="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
+                            <i data-lucide="clock" class="h-8 w-8 text-white mx-auto"></i>
+                            <p class="mt-2 text-sm font-medium">Actions rapides</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  const messages = [
-    { icon: 'bar-chart-3', text: 'Surveillez les indicateurs clés en temps réel' },
-    { icon: 'activity', text: 'Analysez les écarts dès leur apparition' },
-    { icon: 'users', text: 'Collaborez entre analystes et métiers' },
-    { icon: 'zap', text: 'Réagissez rapidement et améliorez la performance' },
-  ];
+        <!-- Right Half: Login Form -->
+        <div class="w-full md:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+            <div class="max-w-md w-full space-y-8">
+                <div>
+                    <div class="flex justify-center">
+                        <div class="h-16 w-16 bg-cacf-green/20 rounded-full flex items-center justify-center">
+                            <i data-lucide="log-in" class="h-8 w-8 text-cacf-green"></i>
+                        </div>
+                    </div>
+                    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                        Connexion à votre compte
+                    </h2>
+                    <p class="mt-2 text-center text-sm text-gray-600">
+                        Connectez-vous pour accéder à votre espace Pilot'Éclair.
+                    </p>
+                </div>
 
-  let i = 0;
-  setInterval(() => {
-    i = (i + 1) % messages.length;
-    const slide = messages[i];
-    document.getElementById("slide-text").innerHTML = `<i data-lucide="${slide.icon}" class="inline-block w-5 h-5 text-cacf-green mr-2"></i> ${slide.text}`;
-    lucide.createIcons();
-  }, 4000);
-</script>
+                <!-- Display Django Messages -->
+                {% if messages %}
+                <div>
+                    {% for message in messages %}
+                    <div class="mb-4 p-3 text-white rounded-md flex items-center {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
+                        {% if message.tags == 'success' %}
+                        <i data-lucide="check-circle" class="h-5 w-5 mr-2"></i>
+                        {% else %}
+                        <i data-lucide="alert-circle" class="h-5 w-5 mr-2"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form class="mt-8 space-y-6" method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="space-y-4">
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="user" class="h-5 w-5 text-gray-400"></i>
+                                </div>
+                                <input type="text" name="username" id="username" required
+                                    class="pl-10 appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-cacf-green focus:border-cacf-green sm:text-sm"
+                                    placeholder="Entrez votre nom d'utilisateur">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="lock" class="h-5 w-5 text-gray-400"></i>
+                                </div>
+                                <input type="password" name="password" id="password" required
+                                    class="pl-10 appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-cacf-green focus:border-cacf-green sm:text-sm"
+                                    placeholder="Entrez votre mot de passe">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-cacf-green hover:bg-cacf-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cacf-green transition duration-150 ease-in-out">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <i data-lucide="log-in" class="h-5 w-5 text-cacf-green group-hover:text-white"></i>
+                        </span>
+                        Se connecter
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+    </script>
+{% endif %}
 {% endblock %}

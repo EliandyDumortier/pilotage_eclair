@@ -3,12 +3,68 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Pilot'Éclair{% endblock %}</title>
-    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+     <!-- Swiper CSS -->
+     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+    <!-- Swiper JS -->
+        <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
 </head>
-<body class="bg-cacf-gray text-gray-800 font-sans">
-    <div class="max-w-5xl mx-auto py-10">
+<body class="flex flex-col min-h-screen bg-cacf-light text-cacf-dark">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img src="{% static 'img/logo-cacf.png' %}" alt="CACF" class="h-16">
+                </div>
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'home' %}" class="px-4 py-2 text-sm bg-cacf-green text-white rounded hover:bg-cacf-dark transition duration-300">Home</a>
+                        <a href="{% url 'dashboard' %}" class="px-4 py-2 text-sm bg-cacf-green text-white rounded hover:bg-cacf-dark transition duration-300">Dashboard</a>
+                        <form action="{% url 'logout' %}" method="post" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="px-4 py-2 text-sm bg-cacf-error text-white rounded hover:bg-red-700 transition duration-300">
+                                Logout
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="px-4 py-2 text-sm bg-cacf-green text-white rounded hover:bg-cacf-dark transition duration-300">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-grow">
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-cacf-dark text-cacf-light py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center">
+                <div class="text-sm">© {{ now.year }} Pilot'Éclair - Crédit Agricole Consumer Finance</div>
+                <div class="text-sm flex space-x-4">
+                    <a href="#" class="hover:underline">Politique de confidentialité</a>
+                    <a href="#" class="hover:underline">Mentions légales</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() { 
+            lucide.createIcons(); 
+        });
+    </script>
 </body>
 </html>

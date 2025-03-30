@@ -1,6 +1,133 @@
 {% extends "pilot/base.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard - Pilot'Éclair{% endblock %}
+
 {% block content %}
-<h1 class="text-2xl font-bold text-cacf-green mb-4">Bienvenue Admin</h1>
-<p class="mb-4">Vue complète du système avec tous les KPI.</p>
-{% include "pilot/partials/kpi_cards.html" %}
+<div class="p-6">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-4">Gestion des Utilisateurs</h2>
+        <div class="bg-white rounded-lg shadow p-6">
+            <!-- Filters and Add User Button -->
+            <div class="flex justify-between mb-4">
+                <div class="flex gap-2">
+                    <form method="GET" class="flex gap-2">
+                        <select name="role" class="border rounded px-3 py-2" onchange="this.form.submit()">
+                            <option value="">Tous les rôles</option>
+                            <option value="analyste" {% if role_selected == 'analyste' %}selected{% endif %}>Analyste</option>
+                            <option value="metier" {% if role_selected == 'metier' %}selected{% endif %}>Métier</option>
+                        </select>
+                    </form>
+                </div>
+                <button onclick="document.getElementById('addUserModal').classList.remove('hidden')" 
+                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    <i data-lucide="plus" class="inline-block w-4 h-4 mr-1"></i>
+                    Nouvel Utilisateur
+                </button>
+            </div>
+
+            <!-- Users Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="text-left py-2">Nom</th>
+                            <th class="text-left py-2">Email</th>
+                            <th class="text-left py-2">Rôle</th>
+                            <th class="text-left py-2">Date d'inscription</th>
+                            <th class="text-left py-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-2">{{ user.username }}</td>
+                            <td class="py-2">{{ user.email }}</td>
+                            <td class="py-2">{{ user.get_role_display }}</td>
+                            <td class="py-2">{{ user.date_joined|date:"d/m/Y" }}</td>
+                            <td class="py-2">
+                                <button onclick="editUser('{{ user.id }}')" 
+                                        class="text-blue-600 hover:text-blue-800 mr-2">
+                                    <i data-lucide="edit" class="inline-block w-4 h-4"></i>
+                                    Modifier
+                                </button>
+                                <button onclick="confirmDeactivate('{{ user.id }}')" 
+                                        class="text-red-600 hover:text-red-800">
+                                    <i data-lucide="user-x" class="inline-block w-4 h-4"></i>
+                                    Désactiver
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="py-4 text-center text-gray-500">
+                                Aucun utilisateur trouvé
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div id="addUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+        <h3 class="text-xl font-bold mb-4">Ajouter un utilisateur</h3>
+        <form method="POST" action="{% url 'add_user' %}">
+            {% csrf_token %}
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
+                    <input type="text" name="username" required
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" required
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Rôle</label>
+                    <select name="role" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        <option value="analyste">Analyste</option>
+                        <option value="metier">Métier</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button type="button" 
+                        onclick="document.getElementById('addUserModal').classList.add('hidden')"
+                        class="px-4 py-2 border rounded-md hover:bg-gray-50">
+                    Annuler
+                </button>
+                <button type="submit" 
+                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                    Ajouter
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function editUser(userId) {
+        // Implement edit user logic
+        console.log('Edit user:', userId);
+    }
+
+    function confirmDeactivate(userId) {
+        if (confirm('Êtes-vous sûr de vouloir désactiver cet utilisateur ?')) {
+            // Implement deactivate user logic
+            console.log('Deactivate user:', userId);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
 {% endblock %}

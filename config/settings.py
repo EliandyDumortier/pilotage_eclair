@@ -152,3 +152,18 @@ NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 #login and logout urls
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
+
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "theme/static",  # Tailwind CSS static files
+]
+
+# Tailwind specific (you probably already have these)
+TAILWIND_APP_NAME = 'theme'
+TAILWIND_CSS_PATH = 'css/dist/styles.css'

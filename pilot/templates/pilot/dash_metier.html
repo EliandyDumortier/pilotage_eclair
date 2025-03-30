@@ -1,6 +1,101 @@
 {% extends "pilot/base.html" %}
+{% load static %}
+
+{% block title %}Métier Dashboard - Pilot'Éclair{% endblock %}
+
 {% block content %}
-<h1 class="text-2xl font-bold text-cacf-green mb-4">Bienvenue Métier</h1>
-<p class="mb-4">Voici les 10 derniers KPI pour suivi opérationnel rapide.</p>
-{% include "pilot/partials/kpi_cards.html" %}
+<div class="p-6">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold mb-4">Tableau de Bord Métier</h2>
+        
+        <!-- KPI Filters -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Filtres</h3>
+                <a href="{% url 'export_excel' %}?{{ request.GET.urlencode }}" 
+                   class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                    <i data-lucide="download" class="inline-block w-4 h-4 mr-1"></i>
+                    Exporter Excel
+                </a>
+            </div>
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" name="date" value="{{ date_selected|default:'' }}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Catégorie</label>
+                    <select name="categorie" 
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                        <option value="">Toutes les catégories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.0 }}" {% if categorie_selected == cat.0 %}selected{% endif %}>
+                            {{ cat.1 }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" 
+                            class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        <i data-lucide="filter" class="inline-block w-4 h-4 mr-1"></i>
+                        Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- KPIs Table -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-xl font-semibold mb-4">KPIs du mois</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="text-left py-2">Indicateur</th>
+                            <th class="text-left py-2">Valeur Actuelle</th>
+                            <th class="text-left py-2">Objectif</th>
+                            <th class="text-left py-2">Écart</th>
+                            <th class="text-left py-2">Catégorie</th>
+                            <th class="text-left py-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for kpi in kpis %}
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-2">{{ kpi.nom }}</td>
+                            <td class="py-2">{{ kpi.valeur_actuelle }}</td>
+                            <td class="py-2">{{ kpi.objectif }}</td>
+                            <td class="py-2 {% if kpi.ecart < 0 %}text-red-600{% else %}text-green-600{% endif %}">
+                                {{ kpi.ecart }}
+                            </td>
+                            <td class="py-2">{{ kpi.get_categorie_display }}</td>
+                            <td class="py-2">
+                                <a href="{% url 'kpi-detail' kpi.id %}" 
+                                   class="text-blue-600 hover:text-blue-800">
+                                    <i data-lucide="message-square" class="inline-block w-4 h-4 mr-1"></i>
+                                    Commenter
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="py-4 text-center text-gray-500">
+                                Aucun KPI trouvé
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
 {% endblock %}

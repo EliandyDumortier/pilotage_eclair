@@ -1,67 +1,90 @@
-{% extends "pilot/base.html" %}
-
-{% block title %}Dashboard – Pilot'Éclair{% endblock %}
+{% extends 'pilot/base.html' %}
 
 {% block content %}
-    <h1 class="text-3xl font-bold mb-6 text-center text-cacf-green">📊 Suivi des KPIs – Pilot'Éclair</h1>
+<div class="py-6">
+    <!-- Page header -->
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h1 class="text-2xl font-semibold text-gray-900">Tableau de bord</h1>
+    </div>
 
-    <!-- Formulaire de filtre -->
-    <form method="get" class="mb-6 flex flex-col md:flex-row items-center gap-4 justify-center">
-        <div>
-            <label for="date" class="text-sm font-semibold">Date :</label>
-            <input type="date" id="date" name="date" value="{{ date_selected }}"
-                   class="border border-cacf-mediumgray rounded px-2 py-1">
-        </div>
-
-        <div>
-            <label for="categorie" class="text-sm font-semibold">Catégorie :</label>
-            <select name="categorie" id="categorie" class="border border-cacf-mediumgray rounded px-2 py-1">
-                <option value="">-- Toutes --</option>
-                {% for key, label in categories %}
-                    <option value="{{ key }}" {% if key == categorie_selected %}selected{% endif %}>
-                        {{ label }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="flex items-center gap-2">
-            <button type="submit" class="bg-cacf-green text-white px-4 py-1 rounded hover:bg-cacf-dark">
-                Appliquer
-            </button>
-            {% if filter_applied %}
-                <a href="{% url 'dashboard' %}" class="text-sm text-cacf-alert underline">Réinitialiser</a>
-            {% endif %}
-        </div>
-    </form>
-
-    <!-- Affichage des KPIs -->
-    {% if kpis %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {% for kpi in kpis %}
-                <div class="bg-white shadow rounded-xl p-5 border border-cacf-mediumgray">
-                    <h2 class="text-xl font-semibold mb-2">
-                        <a href="{% url 'kpi-detail' kpi.pk %}" class="text-cacf-green hover:underline">
-                            {{ kpi.nom }}
-                        </a>
-                    </h2>
-                    <p><strong>Valeur actuelle :</strong> {{ kpi.valeur_actuelle }}</p>
-                    <p><strong>Objectif :</strong> {{ kpi.objectif }}</p>
-                    <p><strong>Écart :</strong> 
-                        {% if kpi.ecart > 0 %}
-                            <span class="text-cacf-green font-bold">+{{ kpi.ecart }}</span>
-                        {% elif kpi.ecart < 0 %}
-                            <span class="text-cacf-alert font-bold">{{ kpi.ecart }}</span>
-                        {% else %}
-                            <span class="text-cacf-mediumgray">0</span>
-                        {% endif %}
-                    </p>
-                    <p><strong>Catégorie :</strong> {{ kpi.get_categorie_display }}</p>
-                    <p class="text-sm text-cacf-mediumgray mt-2">Date : {{ kpi.date }}</p>
+    <!-- Filters -->
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="bg-white shadow-sm ring-1 ring-gray-900/5 rounded-lg p-6">
+            <form class="space-y-4 sm:flex sm:space-x-4 sm:space-y-0">
+                <div class="w-full sm:w-64">
+                    <label for="date_start" class="block text-sm font-medium text-gray-700">Date début</label>
+                    <input type="date" name="date_start" id="date_start" 
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cacf-green focus:ring-cacf-green sm:text-sm">
                 </div>
-            {% endfor %}
+                <div class="w-full sm:w-64">
+                    <label for="date_end" class="block text-sm font-medium text-gray-700">Date fin</label>
+                    <input type="date" name="date_end" id="date_end" 
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cacf-green focus:ring-cacf-green sm:text-sm">
+                </div>
+                <div class="w-full sm:w-64">
+                    <label for="category" class="block text-sm font-medium text-gray-700">Catégorie</label>
+                    <select name="category" id="category" 
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cacf-green focus:ring-cacf-green sm:text-sm">
+                        <option value="">Toutes</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="w-full sm:w-auto sm:self-end">
+                    <button type="submit" 
+                            class="w-full sm:w-auto bg-cacf-green px-4 py-2 text-sm text-white font-semibold rounded-md hover:bg-cacf-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cacf-green">
+                        Filtrer
+                    </button>
+                </div>
+            </form>
         </div>
-    {% else %}
-        <p class="text-center text-cacf-mediumgray">Aucun KPI disponible pour le moment.</p>
-    {% endif %}
+    </div>
+
+    <!-- KPI Grid -->
+    <div class="mt-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {% for kpi in kpis %}
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="p-5">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-md bg-cacf-green/10 p-3">
+                                    <i data-lucide="{{ kpi.icon }}" class="h-6 w-6 text-cacf-green"></i>
+                                </div>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <dl>
+                                    <dt class="text-sm font-medium text-gray-500 truncate">{{ kpi.name }}</dt>
+                                    <dd class="flex items-baseline">
+                                        <div class="text-2xl font-semibold text-gray-900">{{ kpi.value }}</div>
+                                        <div class="ml-2 flex items-baseline text-sm font-semibold {% if kpi.trend > 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                                            {% if kpi.trend > 0 %}
+                                            <i data-lucide="trending-up" class="h-4 w-4"></i>
+                                            {% else %}
+                                            <i data-lucide="trending-down" class="h-4 w-4"></i>
+                                            {% endif %}
+                                            <span class="sr-only">{{ kpi.trend }}% </span>
+                                            <span class="ml-1">{{ kpi.trend }}%</span>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-5 py-3">
+                        <div class="text-sm">
+                            <a href="{% url 'kpi-detail' kpi.id %}" class="font-medium text-cacf-green hover:text-cacf-dark">
+                                Voir détails
+                                <span class="sr-only"> {{ kpi.name }}</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
