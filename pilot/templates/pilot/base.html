@@ -23,22 +23,49 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
+                    <a href="{% url 'home' %}"></a>
                     <img src="{% static 'img/logo-cacf.png' %}" alt="CACF" class="h-16">
                 </div>
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-0">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'home' %}" class="px-4 py-2 text-sm bg-cacf-green text-white rounded hover:bg-cacf-dark transition duration-300">Home</a>
-                        <a href="{% url 'dashboard' %}" class="px-4 py-2 text-sm bg-cacf-green text-white rounded hover:bg-cacf-dark transition duration-300">Dashboard</a>
-                        <form action="{% url 'logout' %}" method="post" class="inline">
-                            {% csrf_token %}
-                            <button type="submit" class="px-4 py-2 text-sm bg-cacf-error text-white rounded hover:bg-red-700 transition duration-300">
-                                Logout
-                            </button>
-                        </form>
+                        <a href="{% url 'home' %}" class="px-4 py-2 text-sm  transition duration-300 
+                        {% if request.resolver_match.url_name == 'home' %}bg-cacf-dark text-white{% else %}bg-cacf-green text-white hover:bg-cacf-dark{% endif %}"> <i data-lucide="home" class="h-2 w-2 text-white text-sm" ></i>Page d'accueil</a>
+                        <a href="{% url 'dashboard' %}" class="px-4 py-2 text-sm  transition duration-300 
+                        {% if request.resolver_match.url_name == 'dashboard' %}bg-cacf-dark text-white{% else %}bg-cacf-green text-white hover:bg-cacf-dark{% endif %}"><i data-lucide="layout-dashboard" class="h-2 w-2 text-white text-sm" ></i>Tableau de bord</a>
+                        {% if user.role == 'analyste' %}
+                            <a href="{#}" class="px-4 py-2 text-sm bg-cacf-green text-white  hover:bg-cacf-dark transition duration-300"><i data-lucide="chart-column" class="h-2 w-2 text-white text-sm" ></i>Analyses</a>
+                            <a href="{% url 'upload_powerbi' %}" class="px-4 py-2 text-sm bg-cacf-green text-white  hover:bg-cacf-dark transition duration-300"><i data-lucide="file-chart-column" class="h-2 w-2 text-white text-sm" ></i>Power BI</a>
+                        {% elif user.role == 'metier' %}
+                            <a href="{#}" class="px-4 py-2 text-sm bg-cacf-green text-white  hover:bg-cacf-dark transition duration-300"><i data-lucide="chart-column" class="h-2 w-2 text-white text-sm" ></i>Analyses</a>
+                    {% endif %}
+                    <form action="{% url 'logout' %}" method="post" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="px-4 py-2 text-sm bg-cacf-error text-white  hover:bg-red-700 transition duration-300"> 
+                            Se déconnecter  <i data-lucide="circle-power" class="h-2 w-2 text-white text-sm" ></i>
+                        </button>
+                    </form>
                     {% else %}
                         <a href="{% url 'login' %}" class="px-4 py-2 text-sm bg-cacf-green text-white rounded hover:bg-cacf-dark transition duration-300">Login</a>
-                    {% endif %}
+                {% endif %}
+
                 </div>
+                
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="bg-cacf-dark shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-end">
+            <div class="flex justify-between h-6">
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                    <span class="text-sm text-white">Connecté en tant que <strong>{{ user.username }}</strong> ({{ user.get_role_display }})</span>
+
+                {% endif %}
+
+                </div>
+                
             </div>
         </div>
     </nav>
