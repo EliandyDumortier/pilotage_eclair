@@ -66,5 +66,24 @@
             lucide.createIcons(); 
         });
     </script>
+    {% if messages %}
+    <div id="toast-container" class="fixed top-6 right-6 z-50">
+      {% for message in messages %}
+        <div class="flex items-center max-w-sm mb-4 px-4 py-3 rounded-lg shadow-lg text-white 
+                    {% if message.tags == 'success' %}bg-green-600{% else %}bg-red-600{% endif %}">
+          <i data-lucide="{% if message.tags == 'success' %}check-circle{% else %}alert-circle{% endif %}" class="w-5 h-5 mr-2"></i>
+          <span class="text-sm">{{ message }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  
+    <script>
+      setTimeout(() => {
+        const toast = document.getElementById('toast-container');
+        if (toast) toast.remove();
+      }, 3500);
+    </script>
+  {% endif %}
+  
 </body>
 </html>
