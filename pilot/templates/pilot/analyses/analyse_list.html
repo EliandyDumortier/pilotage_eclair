@@ -1,0 +1,41 @@
+{% extends "pilot/base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto p-4">
+  <h2 class="text-xl font-bold mb-4">Mes Analyses</h2>
+
+  {% if user.role == 'analyste' %}
+    <a href="{% url 'create_analyse' %}" class="bg-cacf-green text-white px-4 py-2 rounded mb-4 inline-block hover:bg-cacf-dark transition">+ Nouvelle Analyse</a>
+  {% endif %}
+
+  <ul>
+    {% for analyse in analyses %}
+      <li class="mb-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex justify-between items-start">
+          <div>
+            <a href="{% url 'analyse_detail' analyse.pk %}" class="font-semibold text-cacf-dark hover:underline text-lg">
+              {{ analyse.titre }}
+            </a>
+            <p class="text-sm text-gray-600 mt-1">{{ analyse.get_chart_type_display }} | {{ analyse.categorie }}</p>
+          </div>
+          
+          {% if user.role == 'analyste' and user == analyse.auteur %}
+            <div class="flex space-x-2">
+              <a href="{% url 'update_analyse' analyse.pk %}" 
+                 class="text-blue-600 hover:text-blue-800 px-3 py-1 rounded border border-blue-600 hover:border-blue-800 text-sm">
+                Modifier
+              </a>
+              <a href="{% url 'delete_analyse' analyse.pk %}" 
+                 class="text-red-600 hover:text-red-800 px-3 py-1 rounded border border-red-600 hover:border-red-800 text-sm"
+                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette analyse ?')">
+                Supprimer
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </li>
+    {% empty %}
+      <li class="text-gray-500 text-center py-8">Aucune analyse disponible.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

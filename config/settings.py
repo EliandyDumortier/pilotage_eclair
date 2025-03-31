@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pilot',
     'tailwind',
-    'theme'
+    'theme',
+    'widget_tweaks',
 
 ]
 

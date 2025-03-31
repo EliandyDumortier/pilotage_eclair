@@ -1,0 +1,50 @@
+{% extends "pilot/base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-8 p-6 bg-white shadow-md rounded-lg">
+
+  <!-- 📄 Export Button with forced download -->
+  <a href="{% url 'export_analyse_pdf' analyse.pk %}" 
+     class="inline-block bg-cacf-green text-white px-4 py-2 rounded hover:bg-cacf-dark transition mt-4"
+     target="_blank" download>
+      📄 Exporter en PDF
+  </a>  
+
+  <h2 class="text-xl font-bold text-cacf-dark mb-6">{{ analyse.titre }}</h2>
+  <p class="mb-4 text-gray-700">{{ analyse.description }}</p>
+
+  <!-- 📊 Plotly Chart -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <div>
+    {{ plotly_chart|safe }}
+  </div>
+
+  <!-- 💡 Insights Section -->
+  <h3 class="text-lg font-semibold text-cacf-dark mt-8 mb-2">💡 Insights de l'analyste</h3>
+  {% if insights %}
+    <ul class="space-y-2">
+      {% for insight in insights %}
+        <li class="bg-cacf-light p-3 rounded border text-sm">
+          <strong>{{ insight.utilisateur.username }}:</strong> {{ insight.contenu }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-sm text-gray-500">Aucun insight pour cette analyse.</p>
+  {% endif %}
+
+  <!-- 🗨️ Comments Section -->
+  <h3 class="text-lg font-semibold text-cacf-dark mt-8 mb-2">🗨️ Commentaires métier</h3>
+  {% if commentaires %}
+    <ul class="space-y-2">
+      {% for comment in commentaires %}
+        <li class="border rounded p-3 bg-white shadow text-sm">
+          <strong>{{ comment.utilisateur.username }}:</strong> {{ comment.contenu }}<br>
+          <small class="text-gray-400">{{ comment.date_creation|date:"d M Y H:i" }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-sm text-gray-500">Aucun commentaire métier associé.</p>
+  {% endif %}
+</div>
+{% endblock %}

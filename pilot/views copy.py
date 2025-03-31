@@ -283,31 +283,13 @@ class AddInsightView(LoginRequiredMixin, View):
 
 
     #################Analysess#######################
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
-from django.views import View
-from django.template.loader import get_template
-from django.http import HttpResponse
+from django.views.generic import ListView,CreateView
+from .models import Analyse
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from xhtml2pdf import pisa
-from .models import Analyse, KPI
+
 from .forms import AnalyseForm
-from datetime import datetime
-import plotly.graph_objs as go
-import plotly.io as pio
-import plotly.offline as pyo
-import base64
-import logging
-from django.contrib.staticfiles import finders
-from django.db.models import Sum, Prefetch
-from io import BytesIO
-from django.db import models
 
-logger = logging.getLogger(__name__)
 
-class AnalysteRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.role == 'analyste'
 
 class AnalyseListView(ListView):
     model = Analyse
@@ -320,7 +302,12 @@ class AnalyseListView(ListView):
             return Analyse.objects.filter(auteur=user)  # Show only the analyst's own
         return Analyse.objects.filter(is_published=True)  # Métier only sees published
 
-class CreateAnalyseView(AnalysteRequiredMixin, CreateView):
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+from .models import Analyse, KPI
+from .forms import AnalyseForm
+
+class CreateAnalyseView(CreateView):
     model = Analyse
     form_class = AnalyseForm
     template_name = 'pilot/analyses/analyse_create.html'
@@ -340,45 +327,35 @@ class CreateAnalyseView(AnalysteRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
+    # Save the instance first (now it has an ID)
         self.object = form.save(commit=False)
         self.object.auteur = self.request.user
         self.object.save()
 
+    # 💥 Assign KPI ManyToMany after the instance is saved
         selected_names = form.cleaned_data.get('kpi_names', [])
         matching_kpis = KPI.objects.filter(nom__in=selected_names)
         self.object.kpis.set(matching_kpis)
 
+    # Save filter info to session (for detail view)
         self.request.session['kpi_names'] = selected_names
         self.request.session['date_debut'] = self.request.POST.get('date_debut') or None
         self.request.session['date_fin'] = self.request.POST.get('date_fin') or None
 
         return super().form_valid(form)
 
-class UpdateAnalyseView(AnalysteRequiredMixin, UpdateView):
-    model = Analyse
-    form_class = AnalyseForm
-    template_name = 'pilot/analyses/analyse_update.html'
-    success_url = reverse_lazy('analyse_list')
 
-    def test_func(self):
-        obj = self.get_object()
-        return super().test_func() and obj.auteur == self.request.user
 
-    def form_valid(self, form):
-        self.object = form.save()
-        selected_names = form.cleaned_data.get('kpi_names', [])
-        matching_kpis = KPI.objects.filter(nom__in=selected_names)
-        self.object.kpis.set(matching_kpis)
-        return super().form_valid(form)
 
-class DeleteAnalyseView(AnalysteRequiredMixin, DeleteView):
-    model = Analyse
-    template_name = 'pilot/analyses/analyse_confirm_delete.html'
-    success_url = reverse_lazy('analyse_list')
 
-    def test_func(self):
-        obj = self.get_object()
-        return super().test_func() and obj.auteur == self.request.user
+from django.views.generic import DetailView
+from .models import Analyse, KPI
+import plotly.graph_objs as go
+import plotly.offline as pyo
+from datetime import datetime
+from django.db import models
+from django.utils.timezone import now
+
 
 class AnalyseDetailView(DetailView):
     model = Analyse
@@ -389,21 +366,25 @@ class AnalyseDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         analyse = self.get_object()
 
+        # ✅ Retrieve session-stored filters
         selected_names = self.request.session.get('kpi_names', [])
         date_debut = self.request.session.get('date_debut')
         date_fin = self.request.session.get('date_fin')
 
+        # ✅ Parse date strings
         if date_debut:
             date_debut = datetime.strptime(date_debut, '%Y-%m-%d').date()
         if date_fin:
             date_fin = datetime.strptime(date_fin, '%Y-%m-%d').date()
 
+        # ✅ Filter KPIs based on names and date range
         kpis = KPI.objects.filter(nom__in=selected_names)
         if date_debut:
             kpis = kpis.filter(date__gte=date_debut)
         if date_fin:
             kpis = kpis.filter(date__lte=date_fin)
 
+        # 🪵 Debug output
         print("\n📊 DEBUG — Analyse Detail View")
         print("Selected KPI names:", selected_names)
         print("Date début:", date_debut)
@@ -412,6 +393,7 @@ class AnalyseDetailView(DetailView):
         for k in kpis:
             print(f" - KPI: {k.nom} | Date: {k.date} | Valeur actuelle: {k.valeur_actuelle}")
 
+        # 💬 Collect comments and insights
         commentaires = []
         for kpi in kpis:
             commentaires.extend(kpi.commentaires.select_related('utilisateur').all())
@@ -422,6 +404,7 @@ class AnalyseDetailView(DetailView):
         context['insights'] = insights
         context['commentaires'] = regular_comments
 
+        # 📊 Generate Plotly chart
         chart_type = analyse.chart_type
         fig = go.Figure()
 
@@ -434,6 +417,7 @@ class AnalyseDetailView(DetailView):
                     mode='lines+markers',
                     name=nom
                 ))
+
         elif chart_type == 'bar':
             for nom in selected_names:
                 subset = kpis.filter(nom=nom).order_by('date')
@@ -442,6 +426,7 @@ class AnalyseDetailView(DetailView):
                     y=[k.valeur_actuelle for k in subset],
                     name=nom
                 ))
+
         elif chart_type == 'pie':
             grouped = {}
             for nom in selected_names:
@@ -456,74 +441,72 @@ class AnalyseDetailView(DetailView):
 
         return context
 
+
+#### export analyses to PDF 
+from django.views import View
+from django.template.loader import get_template
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from .models import Analyse, KPI
+from datetime import datetime
+import plotly.graph_objs as go
+import plotly.io as pio
+import base64
+import logging
+from django.contrib.staticfiles import finders
+from django.db.models import Sum, Prefetch
+from io import BytesIO
+
+logger = logging.getLogger(__name__)
 class ExportAnalysePDFView(View):
     def get(self, request, pk):
         try:
-            analyse = (Analyse.objects
-                      .select_related('auteur')
-                      .prefetch_related(
-                          Prefetch('kpis', 
-                                  queryset=KPI.objects.select_related())
-                      )
-                      .get(pk=pk))
+            analyse = Analyse.objects.select_related('auteur').get(pk=pk)
 
             selected_names = request.session.get('kpi_names', [])
+            date_debut = request.session.get('date_debut')
+            date_fin = request.session.get('date_fin')
             date_filters = {}
-            
-            for date_key in ['date_debut', 'date_fin']:
-                date_val = request.session.get(date_key)
-                if date_val:
-                    filter_key = 'date__gte' if date_key == 'date_debut' else 'date__lte'
-                    date_filters[filter_key] = datetime.strptime(date_val, "%Y-%m-%d").date()
 
-            kpis = (KPI.objects
-                   .filter(nom__in=selected_names, **date_filters)
-                   .select_related()
-                   .prefetch_related(
-                       Prefetch('commentaires',
-                               queryset=KPI.commentaires.through.objects.select_related('utilisateur'))
-                   ))
+            if date_debut:
+                date_filters['date__gte'] = datetime.strptime(date_debut, "%Y-%m-%d").date()
+            if date_fin:
+                date_filters['date__lte'] = datetime.strptime(date_fin, "%Y-%m-%d").date()
 
-            commentaires = [c for kpi in kpis for c in kpi.commentaires.all()]
-            insights, regular_comments = [], []
-            for c in commentaires:
-                (insights if c.is_insight else regular_comments).append(c)
+            kpis = KPI.objects.filter(nom__in=selected_names, **date_filters).select_related()
 
+            commentaires = []
+            for kpi in kpis:
+                commentaires.extend(kpi.commentaires.select_related('utilisateur').all())
+
+            insights = [c for c in commentaires if c.is_insight]
+            regular_comments = [c for c in commentaires if not c.is_insight]
+
+            # Chart generation
             fig = go.Figure()
-            
             if analyse.chart_type in ['line', 'bar']:
                 for nom in selected_names:
-                    subset = sorted(
-                        (k for k in kpis if k.nom == nom),
-                        key=lambda k: k.date
-                    )
-                    trace_class = go.Scatter if analyse.chart_type == 'line' else go.Bar
-                    fig.add_trace(trace_class(
-                        x=[k.date for k in subset],
-                        y=[k.valeur_actuelle for k in subset],
-                        name=nom,
-                        mode='lines+markers' if analyse.chart_type == 'line' else None
-                    ))
+                    subset = sorted((k for k in kpis if k.nom == nom), key=lambda k: k.date)
+                    trace = go.Scatter if analyse.chart_type == 'line' else go.Bar
+                    fig.add_trace(trace(x=[k.date for k in subset], y=[k.valeur_actuelle for k in subset], name=nom))
             else:
                 totals = {}
                 for k in kpis:
                     totals[k.nom] = totals.get(k.nom, 0) + k.valeur_actuelle
-                fig = go.Figure(data=[go.Pie(labels=list(totals.keys()), 
-                                           values=list(totals.values()))])
+                fig = go.Figure(data=[go.Pie(labels=list(totals.keys()), values=list(totals.values()))])
 
             fig.update_layout(
                 title=analyse.titre,
+                width=800, height=400,
                 showlegend=True,
-                width=800,
-                height=400,
                 margin=dict(l=50, r=50, t=50, b=50),
                 paper_bgcolor='white',
                 plot_bgcolor='white'
             )
 
+            # Convert chart to base64 image
             img_buffer = BytesIO()
-            pio.write_image(fig, img_buffer, format='jpeg', engine="kaleido", 
-                          width=800, height=400, scale=2)
+            pio.write_image(fig, img_buffer, format='jpeg', engine='kaleido')
             chart_base64 = base64.b64encode(img_buffer.getvalue()).decode()
 
             logo_base64 = None
@@ -533,33 +516,26 @@ class ExportAnalysePDFView(View):
 
             template = get_template("pilot/analyses/analyse_pdf.html")
             result = BytesIO()
-            
-            if not pisa.CreatePDF(
-                template.render({
-                    'analyse': analyse,
-                    'kpis': kpis,
-                    'insights': insights,
-                    'commentaires': regular_comments,
-                    'chart_base64': chart_base64,
-                    'logo_base64': logo_base64,
-                    'now': datetime.now(),
-                }).encode('UTF-8'),
-                dest=result,
-                encoding='utf-8',
-                show_error_as_pdf=True
-            ).err:
-                response = HttpResponse(result.getvalue(), content_type='application/pdf')
-                response['Content-Disposition'] = f'attachment; filename="analyse_{pk}.pdf"'
-                response['Content-Length'] = len(result.getvalue())
-                response['Cache-Control'] = 'no-cache'
-                return response
+            html = template.render({
+                'analyse': analyse,
+                'kpis': kpis,
+                'insights': insights,
+                'commentaires': regular_comments,
+                'chart_base64': chart_base64,
+                'logo_base64': logo_base64,
+                'now': datetime.now(),
+            }).encode('UTF-8')
 
-            logger.error("PDF generation failed")
-            return HttpResponse("Erreur lors de la génération du PDF", status=500)
+            pisa.CreatePDF(html, dest=result, encoding='utf-8')
+            response = HttpResponse(result.getvalue(), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="analyse_{pk}.pdf"'
+            return response
 
         except Exception as e:
             logger.error(f"PDF Export Error: {str(e)}", exc_info=True)
-            return HttpResponse("Une erreur est survenue lors de l'exportation du PDF.", status=500)
+            return HttpResponse("Erreur lors de la génération du PDF", status=500)
+
+
 #exemple
 
 from django.views import View

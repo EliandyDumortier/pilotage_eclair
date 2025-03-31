@@ -90,3 +90,36 @@ class PowerBIReport(models.Model):
 
     class Meta:
         ordering = ['-date_upload']
+
+
+
+
+#### analyses 
+class Analyse(models.Model):
+    CHART_TYPES = [
+        ('line', 'Ligne'),
+        ('bar', 'Barres'),
+        ('pie', 'Camembert'),
+    ]
+
+    CATEGORIES = [
+        ('financier', 'Financier'),
+        ('operationnel', 'Opérationnel'),
+        ('autre', 'Autre'),
+    ]
+
+    titre = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    chart_type = models.CharField(max_length=20, choices=CHART_TYPES)
+    categorie = models.CharField(max_length=50, choices=CATEGORIES, default='autre')
+    kpis = models.ManyToManyField(KPI)
+    date_creation = models.DateTimeField(auto_now_add=True)
+    auteur = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_published = models.BooleanField(default=False)
+    plotly_config = models.JSONField(blank=True, null=True)  # Optional: we can generate this in the view
+
+    def __str__(self):
+        return self.titre
+
+    class Meta:
+        ordering = ['-date_creation']

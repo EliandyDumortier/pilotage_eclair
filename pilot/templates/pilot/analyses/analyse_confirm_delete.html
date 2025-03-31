@@ -1,0 +1,25 @@
+{% extends "pilot/base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto p-4">
+  <div class="bg-white shadow-md rounded-lg p-6">
+    <h2 class="text-xl font-bold mb-4 text-red-600">Confirmer la suppression</h2>
+    
+    <p class="mb-6 text-gray-700">
+      Êtes-vous sûr de vouloir supprimer l'analyse "{{ object.titre }}" ?
+      Cette action est irréversible.
+    </p>
+    
+    <form method="post">
+      {% csrf_token %}
+      <div class="flex justify-end space-x-3">
+        <a href="{% url 'analyse_list' %}" class="px-4 py-2 border rounded text-gray-700 hover:bg-gray-50">
+          Annuler
+        </a>
+        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+          Confirmer la suppression
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

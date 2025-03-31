@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (KPIDetailView, RoleDashboardView, WelcomeView, AddUserView, UserManagementView,UpdateUserView
-, UploadPowerBIView,AddInsightView,ExportExcelView
+, UploadPowerBIView,AddInsightView,ExportExcelView, AnalyseListView, CreateAnalyseView,AnalyseDetailView, ExportAnalysePDFView,
+TestPDFView,UpdateAnalyseView,DeleteAnalyseView
 ) 
 
 
@@ -16,5 +17,21 @@ urlpatterns = [
     path('upload-powerbi/', UploadPowerBIView.as_view(), name='upload_powerbi'),
     path('ajouter-insight/', AddInsightView.as_view(), name='add_insight'),
     path('export/', ExportExcelView.as_view(), name='export_excel'),
+    #analyses views
+    #path('analyses/', AnalyseListView.as_view(), name='analyse_list'),
+    #path('analyses/create/', CreateAnalyseView.as_view(), name='create_analyse'),
+    #path('analyses/<int:pk>/', AnalyseDetailView.as_view(), name='analyse_detail'),
+    #path('analyses/<int:pk>/pdf/', ExportAnalysePDFView.as_view(), name='export_analyse_pdf'),
+
+    path('analyses/', AnalyseListView.as_view(), name='analyse_list'),
+    path('analyses/create/', CreateAnalyseView.as_view(), name='create_analyse'),
+    path('analyses/<int:pk>/', AnalyseDetailView.as_view(), name='analyse_detail'),
+    path('analyses/<int:pk>/update/', UpdateAnalyseView.as_view(), name='update_analyse'),
+    path('analyses/<int:pk>/delete/', DeleteAnalyseView.as_view(), name='delete_analyse'),
+    path('analyses/<int:pk>/pdf/', ExportAnalysePDFView.as_view(), name='export_analyse_pdf'),
+    path('test-pdf/', TestPDFView.as_view(), name='test_pdf'),
+
+
+
 
 ]

@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            font-size: 12pt;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 {
+            color: #004b23;
+            font-size: 24pt;
+            margin-bottom: 10px;
+        }
+        h3 {
+            color: #004b23;
+            font-size: 16pt;
+            margin-bottom: 10px;
+        }
+        .logo {
+            width: 140px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-top: 40px;
+        }
+        .comment {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.05);
+        }
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 10pt;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+{% if logo_base64 %}
+<img src="data:image/png;base64,{{ logo_base64 }}" class="logo" alt="CACF">
+{% endif %}
+
+<h1>{{ analyse.titre }}</h1>
+<p>{{ analyse.description }}</p>
+
+{% if chart_base64 %}
+<div style="text-align: center; margin: 30px 0;">
+    <img src="data:image/jpeg;base64,{{ chart_base64 }}" alt="Graphique de l'analyse" style="width: 80%; max-width: 600px;">
+</div>
+{% endif %}
+
+<div class="section">
+    <h3>💡 Insights de l'analyste</h3>
+    {% for i in insights %}
+    <div class="comment">
+        <strong>{{ i.utilisateur.username }}:</strong> {{ i.contenu }}
+    </div>
+    {% empty %}
+    <p>Aucun insight.</p>
+    {% endfor %}
+</div>
+
+<div class="section">
+    <h3>🗨️ Commentaires métier</h3>
+    {% for c in commentaires %}
+    <div class="comment">
+        <strong>{{ c.utilisateur.username }}:</strong> {{ c.contenu }}<br>
+        <small>{{ c.date_creation|date:"d/m/Y H:i" }}</small>
+    </div>
+    {% empty %}
+    <p>Aucun commentaire.</p>
+    {% endfor %}
+</div>
+
+<footer>
+    Rapport généré automatiquement par Pilot'Éclair – {{ now|date:"d/m/Y H:i" }}
+</footer>
+
+</body>
+</html>
